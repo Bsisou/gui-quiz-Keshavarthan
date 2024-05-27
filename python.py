@@ -1,6 +1,6 @@
 from tkinter import *
+import customtkinter as ctk
 import random
-
 
 def main():
     window = Tk()
@@ -26,6 +26,10 @@ def main():
     button_frame.place(relx=0.5, rely=0.5, anchor=CENTER)
 
     window.mainloop()
+
+def quiz_page():
+    window = Tk()
+    window.geometry("1024x768")
 
 if __name__ == "__main__":
     main()
