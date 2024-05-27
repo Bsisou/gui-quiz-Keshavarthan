@@ -2,6 +2,7 @@ from tkinter import *
 import customtkinter as ctk
 import random
 
+
 def main():
     window = Tk()
     window.geometry("1024x768")
@@ -17,20 +18,21 @@ def main():
     button_frame = Frame(window, bg="#222831")
     button_frame.pack(pady=20)
 
-    button1 = Button(button_frame, text="Factoids", font=("Comic Sans MS", 25))
-    button1.pack(padx=100, side=LEFT)
+    button1 = ctk.CTkButton(button_frame, text="Button 1")
+    button1.pack(side="left", padx=10, pady=10)
 
-    button2 = Button(button_frame, text="Quiz", font=("Comic Sans MS", 25))
-    button2.pack(padx=100, side=LEFT)
+    button2 = ctk.CTkButton(button_frame, text="Button 2")
+    button2.pack(side="right", padx=10, pady=10)
 
     button_frame.place(relx=0.5, rely=0.5, anchor=CENTER)
 
     window.mainloop()
 
+
 def quiz_page():
     window = Tk()
     window.geometry("1024x768")
 
+
 if __name__ == "__main__":
     main()
-
