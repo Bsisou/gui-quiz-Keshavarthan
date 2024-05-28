@@ -2,7 +2,6 @@ from tkinter import *
 import customtkinter as ctk
 import random
 
-
 def main():
     window = Tk()
     window.geometry("1024x768")
@@ -15,14 +14,15 @@ def main():
     label = Label(window, text="QUIZPEDIA", font=("Arial", 40))
     label.pack(pady=20)
 
-
+    button_frame = ctk.CTkFrame(window, fg_color="transparent")
+    button_frame.place(relx=0.5, rely=0.5, anchor="center")
 
     button_font = ctk.CTkFont(family="Helvetica", size=30)
-    button1 = ctk.CTkButton(window, text="Quiz", width=200, height=100, fg_color="#76ABAE", font=button_font)
-    button1.pack(side="left", padx=30)
+    button1 = ctk.CTkButton(button_frame, text="Quiz", width=200, height=100, fg_color="#76ABAE", font=button_font)
+    button1.pack(side="left", padx=20)
 
-    button2 = ctk.CTkButton(window, text="Factoids", width=200, height=100,  fg_color="#76ABAE", font=button_font)
-    button2.pack(side="right", padx=30)
+    button2 = ctk.CTkButton(button_frame, text="Factoids", width=200, height=100,  fg_color="#76ABAE", font=button_font)
+    button2.pack(side="left", padx=20)
 
 
 
