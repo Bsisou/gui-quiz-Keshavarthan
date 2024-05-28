@@ -18,12 +18,12 @@ def main():
     button_frame = Frame(window, bg="#222831")
     button_frame.pack(pady=20)
 
-    button_font = ctk.CTkFont(family="Helvetica", size=30)  # Change font type and size
-    button1 = ctk.CTkButton(button_frame, text="Quiz", width=200, height=100, fg_color="green", font=button_font)
-    button1.pack(side="left", padx=10)
+    button_font = ctk.CTkFont(family="Helvetica", size=30)
+    button1 = ctk.CTkButton(button_frame, text="Quiz", width=200, height=100, fg_color="#76ABAE", font=button_font)
+    button1.pack(side="left", padx=30)
 
-    button2 = ctk.CTkButton(button_frame, text="Factoids", width=200, height=100,  fg_color="green", font=button_font)
-    button2.pack(side="right", padx=10)
+    button2 = ctk.CTkButton(button_frame, text="Factoids", width=200, height=100,  fg_color="#76ABAE", font=button_font)
+    button2.pack(side="right", padx=30)
 
     button_frame.place(relx=0.5, rely=0.5, anchor=CENTER)
 
