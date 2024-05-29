@@ -1,19 +1,20 @@
 from tkinter import *
 import customtkinter as ctk
+from tkinter import PhotoImage
 import random
+
+
 
 
 def main():
     window = Tk()
     window.geometry("1024x768")
     window.title("Quizmania")
-    window.configure(bg="#222831")
+    bg_image = PhotoImage(file="C:\\Users\\educa\\OneDrive\\Pictures\\Screen 1@1x (3).png")
 
-    label = Label(window, text="WELCOME TO", font=("Arial", 30), bg="#31363F", fg="#EEEEEE")
-    label.pack(pady=20)
+    bg_label = Label(window, image=bg_image)
+    bg_label.place(relwidth=1, relheight=1)
 
-    label = Label(window, text="QUIZPEDIA", font=("Arial", 40))
-    label.pack(pady=20)
 
     button_frame = ctk.CTkFrame(window, fg_color="transparent")
     button_frame.place(relx=0.5, rely=0.5, anchor="center")
