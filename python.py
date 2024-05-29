@@ -16,15 +16,13 @@ def main():
     bg_label.place(relwidth=1, relheight=1)
 
 
-    button_frame = ctk.CTkFrame(window, fg_color="transparent")
-    button_frame.place(relx=0.5, rely=0.5, anchor="center")
-
     button_font = ctk.CTkFont(family="Helvetica", size=30)
-    button1 = ctk.CTkButton(button_frame, text="Quiz", width=200, height=100, fg_color="#76ABAE", font=button_font)
-    button1.grid(row=0, column=0, padx=75)
+    button1 = ctk.CTkButton(window, text="Quiz", width=200, height=100, fg_color="#76ABAE", font=button_font, border_width=2)
+    button1.place(relx=0.3, rely=0.6, anchor=CENTER)
 
-    button2 = ctk.CTkButton(button_frame, text="Factoids", width=200, height=100,  fg_color="#76ABAE", font=button_font)
-    button2.grid(row=0, column=1, padx=75)
+    button2 = ctk.CTkButton(window, text="Factoids", width=200, height=100,  fg_color="#76ABAE", font=button_font, border_width=2)
+    button2.place(relx=0.7, rely=0.6, anchor=CENTER)
+
 
     window.mainloop()
 
