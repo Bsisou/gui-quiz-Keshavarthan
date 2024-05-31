@@ -10,7 +10,7 @@ def main():
     window = Tk()
     window.geometry("1024x768")
     window.title("Quizmania")
-    bg_image = PhotoImage(file="C:\\Users\\educa\\OneDrive\\Pictures\\Screen 1@1x (3).png")
+    bg_image = PhotoImage(file="C:/Users/educa/OneDrive/Pictures/bg3.png")
 
     bg_label = Label(window, image=bg_image)
     bg_label.place(relwidth=1, relheight=1)
@@ -30,6 +30,7 @@ def main():
 def quiz_page():
     window = Tk()
     window.geometry("1024x768")
+
 
 
 if __name__ == "__main__":
