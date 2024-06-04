@@ -26,6 +26,17 @@ class QuizApp(tk.Tk):
         # Keep a reference to the image
         self.bg_label.image = self.bg_image
 
+        # Quiz frame (hidden by default)
+        self.quiz_frame = ctk.CTkFrame(self)
+        self.quiz_frame.pack_forget()
+
+        # Leaderboard frame (hidden by default)
+        self.leaderboard_frame = ctk.CTkFrame(self)
+        self.leaderboard_frame.pack_forget()
+
+        # Home screen button
+        self.quiz_button = ctk.CTkButton(self.home_frame, text='Start Quiz', command=self.start_quiz)
+        self.quiz_button.pack(pady=20)
 
         button_font = ctk.CTkFont(family="Helvetica", size=30)
         button1 = ctk.CTkButton(self, text="Quiz", width=200, height=100, fg_color="#76ABAE", font=button_font,
@@ -55,6 +66,8 @@ class QuizApp(tk.Tk):
         self.score_label = ctk.CTkLabel(self.leaderboard_frame, text="")
         self.home_button = ctk.CTkButton(self.leaderboard_frame, text='Return to Home', command=self.return_to_home)
 
+
+
     def start_quiz(self):
         self.home_frame.pack_forget()
         self.quiz_frame.pack(fill='both', expand=True)
@@ -73,6 +86,26 @@ class QuizApp(tk.Tk):
         else:
             messagebox.showerror("Invalid Name", "Please enter a valid name (letters only).")
 
+    def check_answer(self):
+        selected_option = self.options_var.get()
+        if selected_option == self.correct_answer:
+            self.user_score += 1
+        self.questions.pop(0)
+        if self.questions:
+            self.display_question()
+        else:
+            self.show_leaderboard()
+
+    def show_leaderboard(self):
+        self.quiz_frame.pack_forget()
+        self.leaderboard_frame.pack(fill='both', expand=True)
+        self.score_label.configure(text=f"{self.user_name}, your score is: {self.user_score}")
+        self.score_label.pack(pady=20)
+        self.home_button.pack(pady=20)
+
+    def return_to_home(self):
+        self.leaderboard_frame.pack_forget()
+        self.home_frame.pack(fill='both', expand=True)
 
 
 if __name__ == "__main__":
