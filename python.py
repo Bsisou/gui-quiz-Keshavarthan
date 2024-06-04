@@ -39,13 +39,14 @@ class QuizApp(tk.Tk):
         self.quiz_button.pack(pady=20)
 
         button_font = ctk.CTkFont(family="Helvetica", size=30)
-        button1 = ctk.CTkButton(self, text="Quiz", width=200, height=100, fg_color="#76ABAE", font=button_font,
-                                border_width=2, corner_radius=2, command=self.start_quiz)
-        button1.place(relx=0.3, rely=0.6, anchor=tk.CENTER)
 
-        button2 = ctk.CTkButton(self, text="Factoids", width=200, height=100, fg_color="#76ABAE", font=button_font,
+        self.button1 = ctk.CTkButton(self, text="Quiz", width=200, height=100, fg_color="#76ABAE", font=button_font,
+                                border_width=2, corner_radius=2, command=self.start_quiz)
+        self.button1.place(relx=0.3, rely=0.6, anchor=tk.CENTER)
+
+        self.button2 = ctk.CTkButton(self, text="Factoids", width=200, height=100, fg_color="#76ABAE", font=button_font,
                                 border_width=2, corner_radius=2)
-        button2.place(relx=0.7, rely=0.6, anchor=tk.CENTER)
+        self.button2.place(relx=0.7, rely=0.6, anchor=tk.CENTER)
 
         self.user_name = ''
 
@@ -70,6 +71,8 @@ class QuizApp(tk.Tk):
 
     def start_quiz(self):
         self.home_frame.pack_forget()
+        self.button1.destroy()
+        self.button2.destroy()
         self.quiz_frame.pack(fill='both', expand=True)
         self.name_label.pack(pady=20)
         self.name_entry.pack(pady=10)
