@@ -52,10 +52,12 @@ class QuizApp(tk.Tk):
 
         self.initialize_quiz_ui()
     def initialize_quiz_ui(self):
+
+        buttonfont2 = ctk.CTkFont(family="Helvetica", size=20)
         # Create widgets for the quiz frame
         self.name_label = ctk.CTkLabel(self.quiz_frame, text="Enter your name:")
         self.name_entry = ctk.CTkEntry(self.quiz_frame)
-        self.enter_button = ctk.CTkButton(self.quiz_frame, text='Enter', command=self.validate_name)
+        self.enter_button = ctk.CTkButton(self.quiz_frame, text='Enter', command=self.validate_name, font=buttonfont2)
 
         self.question_label = ctk.CTkLabel(self.quiz_frame, text="")
         self.options_var = tk.StringVar()
@@ -74,9 +76,8 @@ class QuizApp(tk.Tk):
         self.button1.destroy()
         self.button2.destroy()
         self.quiz_frame.pack(fill='both', expand=True)
-        self.name_label.pack(pady=20)
-        self.name_entry.pack(pady=10)
-        self.enter_button.pack(pady=20)
+        self.name_entry.pack(pady=300,  anchor=tk.CENTER)
+        self.enter_button.pack(pady=2,  anchor=tk.CENTER)
 
     def validate_name(self):
         user_name = self.name_entry.get()
