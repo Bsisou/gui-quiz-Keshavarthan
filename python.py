@@ -1,10 +1,11 @@
 import tkinter as tk
 import customtkinter as ctk
 from tkinter import PhotoImage,messagebox
+from random import shuffle
 from time import sleep
 
 
-class QuizApp(tk.Tk):
+class QuizApp(tk.Tk): #Start of my progra with the class quiz.
     def __init__(self):
         super().__init__()
         self.title("Quizpedia")
@@ -16,7 +17,7 @@ class QuizApp(tk.Tk):
             bg_label.place(x=0, y=0, relwidth=1, relheight=1)
             bg_label.image = self.bg_image
 
-        self.home_frame = tk.Frame(self)
+        self.home_frame = tk.Frame(self, height=768, width=1024)
         self.home_frame.pack(fill='both', expand=True)
         set_background(self.home_frame)
 
@@ -40,15 +41,26 @@ class QuizApp(tk.Tk):
 
         button_font = ctk.CTkFont(family="Helvetica", size=30)
 
-        self.button1 = ctk.CTkButton(self, text="Quiz", width=200, height=100, fg_color="#76ABAE", font=button_font,
+        self.button1 = ctk.CTkButton(self.home_frame, text="Quiz", width=200, height=100, fg_color="#76ABAE", font=button_font,
                                 border_width=2, corner_radius=2, command=self.start_quiz)
         self.button1.place(relx=0.3, rely=0.6, anchor=tk.CENTER)
 
-        self.button2 = ctk.CTkButton(self, text="Factoids", width=200, height=100, fg_color="#76ABAE", font=button_font,
+        self.button2 = ctk.CTkButton(self.home_frame, text="Factoids", width=200, height=100, fg_color="#76ABAE", font=button_font,
                                 border_width=2, corner_radius=2)
         self.button2.place(relx=0.7, rely=0.6, anchor=tk.CENTER)
 
         self.user_name = ''
+        self.user_score = 0
+
+        # Quiz questions and answers
+        self.questions = [
+            ("What is the capital of France?", ["Paris", "London", "Berlin", "Rome"]),
+            ("Which planet is known as the Red Planet?", ["Mars", "Jupiter", "Saturn", "Venus"]),
+            ("What is the largest mammal in the world?", ["Blue whale", "Elephant", "Giraffe", "Hippopotamus"]),
+            # Add more questions as needed
+        ]
+        self.current_question = 0
+        self.correct_answer = ''
 
         self.initialize_quiz_ui()
     def initialize_quiz_ui(self):
@@ -76,15 +88,15 @@ class QuizApp(tk.Tk):
         self.button1.destroy()
         self.button2.destroy()
         self.quiz_frame.pack(fill='both', expand=True)
-        self.name_entry.pack(pady=300,  anchor=tk.CENTER)
-        self.enter_button.pack(pady=2,  anchor=tk.CENTER)
+        self.name_entry.place(relx = 0.5, rely=0.6, anchor=tk.CENTER )
+        self.enter_button.place(relx = 0.5, rely=0.7, anchor=tk.CENTER )
 
     def validate_name(self):
         user_name = self.name_entry.get()
         if user_name.isalpha():
             self.user_name = user_name
-            self.name_label.pack_forget()
-            self.name_entry.pack_forget()
+            self.name_label.place_forget()
+            self.name_entry.place_forget()
             self.enter_button.pack_forget()
             self.display_question()
         else:
@@ -100,6 +112,19 @@ class QuizApp(tk.Tk):
         else:
             self.show_leaderboard()
 
+    def display_question(self):
+        shuffle(self.questions)
+        self.current_question, options = self.questions[0]
+        self.correct_answer = options[0]
+        shuffle(options)
+        self.question_label.configure(text=self.current_question)
+        self.question_label.pack(pady=20)
+        for i, option in enumerate(options):
+            self.options_buttons[i].configure(text=option, value=option)
+            self.options_buttons[i].pack(pady=5)
+        self.options_var.set(options[0])  # Set default value
+        self.submit_button.pack(pady=20)
+
     def show_leaderboard(self):
         self.quiz_frame.pack_forget()
         self.leaderboard_frame.pack(fill='both', expand=True)
@@ -110,6 +135,9 @@ class QuizApp(tk.Tk):
     def return_to_home(self):
         self.leaderboard_frame.pack_forget()
         self.home_frame.pack(fill='both', expand=True)
+        self.button1.place(self, relx=0.3, rely=0.6, anchor=tk.CENTER)
+        self.button2.place(self, relx=0.7, rely=0.6, anchor=tk.CENTER)
+
 
 
 if __name__ == "__main__":
