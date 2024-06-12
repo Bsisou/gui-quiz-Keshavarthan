@@ -14,11 +14,11 @@ class QuizApp(tk.Tk): #Start of my progra with the class quiz.
 
         def set_background(frame):
             bg_label = tk.Label(frame, image=self.bg_image)
-            bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+            bg_label.pack(fill='both', expand=True)
             bg_label.image = self.bg_image
 
         self.home_frame = tk.Frame(self, height=768, width=1024)
-        self.home_frame.pack(fill='both', expand=True)
+        self.home_frame.place(height=768, width=1024)
         set_background(self.home_frame)
 
         self.bg_label = tk.Label(self, image=self.bg_image)
@@ -41,11 +41,11 @@ class QuizApp(tk.Tk): #Start of my progra with the class quiz.
 
         button_font = ctk.CTkFont(family="Helvetica", size=30)
 
-        self.button1 = ctk.CTkButton(self.home_frame, text="Quiz", width=200, height=100, fg_color="#76ABAE", font=button_font,
+        self.button1 = ctk.CTkButton(self, text="Quiz", width=200, height=100, fg_color="#76ABAE", font=button_font,
                                 border_width=2, corner_radius=2, command=self.start_quiz)
         self.button1.place(relx=0.3, rely=0.6, anchor=tk.CENTER)
 
-        self.button2 = ctk.CTkButton(self.home_frame, text="Factoids", width=200, height=100, fg_color="#76ABAE", font=button_font,
+        self.button2 = ctk.CTkButton(self, text="Factoids", width=200, height=100, fg_color="#76ABAE", font=button_font,
                                 border_width=2, corner_radius=2)
         self.button2.place(relx=0.7, rely=0.6, anchor=tk.CENTER)
 
@@ -85,8 +85,8 @@ class QuizApp(tk.Tk): #Start of my progra with the class quiz.
 
     def start_quiz(self):
         self.home_frame.pack_forget()
-        self.button1.destroy()
-        self.button2.destroy()
+        self.button1.place_forget()
+        self.button2.place_forget()
         self.quiz_frame.pack(fill='both', expand=True)
         self.name_entry.place(relx = 0.5, rely=0.6, anchor=tk.CENTER )
         self.enter_button.place(relx = 0.5, rely=0.7, anchor=tk.CENTER )
@@ -95,9 +95,9 @@ class QuizApp(tk.Tk): #Start of my progra with the class quiz.
         user_name = self.name_entry.get()
         if user_name.isalpha():
             self.user_name = user_name
-            self.name_label.place_forget()
+            self.name_label.forget()
             self.name_entry.place_forget()
-            self.enter_button.pack_forget()
+            self.enter_button.place_forget()
             self.display_question()
         else:
             messagebox.showerror("Invalid Name", "Please enter a valid name (letters only).")
@@ -106,11 +106,12 @@ class QuizApp(tk.Tk): #Start of my progra with the class quiz.
         selected_option = self.options_var.get()
         if selected_option == self.correct_answer:
             self.user_score += 1
-        self.questions.pop(0)
-        if self.questions:
-            self.display_question()
-        else:
-            self.show_leaderboard()
+        if self.questions:  # Check if there are still questions left
+            self.questions.pop(0)
+            if self.questions:  # Check again after popping
+                self.display_question()
+            else:
+                self.show_leaderboard()
 
     def display_question(self):
         shuffle(self.questions)
@@ -133,10 +134,16 @@ class QuizApp(tk.Tk): #Start of my progra with the class quiz.
         self.home_button.pack(pady=20)
 
     def return_to_home(self):
-        self.leaderboard_frame.pack_forget()
-        self.home_frame.pack(fill='both', expand=True)
-        self.button1.place(self, relx=0.3, rely=0.6, anchor=tk.CENTER)
-        self.button2.place(self, relx=0.7, rely=0.6, anchor=tk.CENTER)
+        app.destroy()
+        restart()
+
+
+def restart():
+    app = QuizApp()
+    tk.mainloop()
+
+
+
 
 
 
