@@ -10,13 +10,20 @@ class QuizApp(tk.Tk):
         self.title("Quizpedia")
         self.geometry("1024x768")
         self.bg_image = PhotoImage(file="C:/Users/educa/OneDrive/Pictures/bg3.png")
+        self.name_bg_image = PhotoImage(file="C:/Users/educa/OneDrive/Pictures/usernamebg.png")
 
         def set_background(frame):
             bg_label = tk.Label(frame, image=self.bg_image)
             bg_label.pack(fill='both', expand=True)
             bg_label.image = self.bg_image
 
+        def set_name_background(frame):
+            bg_label = tk.Label(frame, image=self.name_bg_image)
+            bg_label.pack(fill='both', expand=True)
+            bg_label.image = self.name_bg_image
+
         self.home_frame = tk.Frame(self, height=768, width=1024)
+
         set_background(self.home_frame)
 
         self.bg_label = tk.Label(self, image=self.bg_image)
@@ -27,6 +34,7 @@ class QuizApp(tk.Tk):
         # Name entry frame (shown by default)
         self.name_frame = ctk.CTkFrame(self)
         self.name_frame.pack(fill='both', expand=True)
+        set_name_background(self.name_frame)
 
         # Quiz frame (hidden by default)
         self.quiz_frame = ctk.CTkFrame(self)
