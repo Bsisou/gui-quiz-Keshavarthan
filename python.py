@@ -4,8 +4,7 @@ from tkinter import PhotoImage,messagebox
 from random import shuffle
 from time import sleep
 
-
-class QuizApp(tk.Tk): #Start of my progra with the class quiz.
+class QuizApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Quizpedia")
@@ -18,14 +17,16 @@ class QuizApp(tk.Tk): #Start of my progra with the class quiz.
             bg_label.image = self.bg_image
 
         self.home_frame = tk.Frame(self, height=768, width=1024)
-        self.home_frame.place(height=768, width=1024)
         set_background(self.home_frame)
 
         self.bg_label = tk.Label(self, image=self.bg_image)
         self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
-
-        # Keep a reference to the image
         self.bg_label.image = self.bg_image
+        self.home_frame.pack(fill='both', expand=True)
+
+        # Name entry frame (shown by default)
+        self.name_frame = ctk.CTkFrame(self)
+        self.name_frame.pack(fill='both', expand=True)
 
         # Quiz frame (hidden by default)
         self.quiz_frame = ctk.CTkFrame(self)
@@ -57,20 +58,28 @@ class QuizApp(tk.Tk): #Start of my progra with the class quiz.
             ("What is the capital of France?", ["Paris", "London", "Berlin", "Rome"]),
             ("Which planet is known as the Red Planet?", ["Mars", "Jupiter", "Saturn", "Venus"]),
             ("What is the largest mammal in the world?", ["Blue whale", "Elephant", "Giraffe", "Hippopotamus"]),
-            # Add more questions as needed
+            ("What is the meal eaten during morning called", ["Breakfast", "Lunch", "Dinner", "Brunch"]),
+            ("What is the capital of Japan?", ["Tokyo", "Kyoto", "Osaka", "Hiroshima"]),
+            ("What is the tallest mountain in the world?", ["Mount Everest", "K2", "Kangchenjunga", "Lhotse"]),
+            ("What is the largest ocean in the world?",
+             ["Pacific Ocean", "Atlantic Ocean", "Indian Ocean", "Arctic Ocean"]),
+            ("What is the smallest planet in our solar system?", ["Mercury", "Venus", "Mars", "Earth"]),
+            ("What is the largest country in the world by area?", ["Russia", "Canada", "China", "United States"]),
+            ("What is the longest river in the world?", ["Nile", "Amazon", "Yangtze", "Mississippi"]),
         ]
         self.current_question = 0
         self.correct_answer = ''
 
         self.initialize_quiz_ui()
+
     def initialize_quiz_ui(self):
-
         buttonfont2 = ctk.CTkFont(family="Helvetica", size=20)
-        # Create widgets for the quiz frame
-        self.name_label = ctk.CTkLabel(self.quiz_frame, text="Enter your name:")
-        self.name_entry = ctk.CTkEntry(self.quiz_frame)
-        self.enter_button = ctk.CTkButton(self.quiz_frame, text='Enter', command=self.validate_name, font=buttonfont2)
+        # Create widgets for the name entry frame
+        self.name_label = ctk.CTkLabel(self.name_frame, text="Enter your name:")
+        self.name_entry = ctk.CTkEntry(self.name_frame)
+        self.enter_button = ctk.CTkButton(self.name_frame, text='Enter', command=self.validate_name, font=buttonfont2)
 
+        # Create widgets for the quiz frame
         self.question_label = ctk.CTkLabel(self.quiz_frame, text="")
         self.options_var = tk.StringVar()
         self.options_buttons = [tk.Radiobutton(self.quiz_frame, text="Option", variable=self.options_var) for _ in
@@ -81,26 +90,24 @@ class QuizApp(tk.Tk): #Start of my progra with the class quiz.
         self.score_label = ctk.CTkLabel(self.leaderboard_frame, text="")
         self.home_button = ctk.CTkButton(self.leaderboard_frame, text='Return to Home', command=self.return_to_home)
 
-
-
     def start_quiz(self):
         self.home_frame.pack_forget()
         self.button1.place_forget()
         self.button2.place_forget()
-        self.quiz_frame.pack(fill='both', expand=True)
         self.name_entry.place(relx = 0.5, rely=0.6, anchor=tk.CENTER )
         self.enter_button.place(relx = 0.5, rely=0.7, anchor=tk.CENTER )
 
     def validate_name(self):
         user_name = self.name_entry.get()
-        if user_name.isalpha():
-            self.user_name = user_name
-            self.name_label.forget()
-            self.name_entry.place_forget()
-            self.enter_button.place_forget()
-            self.display_question()
-        else:
+        if not user_name.isalpha():
             messagebox.showerror("Invalid Name", "Please enter a valid name (letters only).")
+        elif len(user_name) > 20:
+            messagebox.showerror("Invalid Name", "Please enter a name with no more than 20 characters.")
+        else:
+            self.user_name = user_name
+            self.name_frame.pack_forget()
+            self.quiz_frame.pack(fill='both', expand=True)
+            self.display_question()
 
     def check_answer(self):
         selected_option = self.options_var.get()
@@ -134,18 +141,30 @@ class QuizApp(tk.Tk): #Start of my progra with the class quiz.
         self.home_button.pack(pady=20)
 
     def return_to_home(self):
-        app.destroy()
-        restart()
-
-
-def restart():
-    app = QuizApp()
-    tk.mainloop()
-
-
-
-
-
+        # Reset game state
+        self.user_name = ''
+        self.user_score = 0
+        self.questions = [
+            ("What is the capital of France?", ["Paris", "London", "Berlin", "Rome"]),
+            ("Which planet is known as the Red Planet?", ["Mars", "Jupiter", "Saturn", "Venus"]),
+            ("What is the largest mammal in the world?", ["Blue whale", "Elephant", "Giraffe", "Hippopotamus"]),
+            ("What is the meal eaten during morning called", ["Breakfast", "Lunch", "Dinner", "Brunch"]),
+            ("What is the capital of Japan?", ["Tokyo", "Kyoto", "Osaka", "Hiroshima"]),
+            ("What is the tallest mountain in the world?", ["Mount Everest", "K2", "Kangchenjunga", "Lhotse"]),
+            ("What is the largest ocean in the world?",
+             ["Pacific Ocean", "Atlantic Ocean", "Indian Ocean", "Arctic Ocean"]),
+            ("What is the smallest planet in our solar system?", ["Mercury", "Venus", "Mars", "Earth"]),
+            ("What is the largest country in the world by area?", ["Russia", "Canada", "China", "United States"]),
+            ("What is the longest river in the world?", ["Nile", "Amazon", "Yangtze", "Mississippi"]),
+        ]
+        self.current_question = 0
+        self.correct_answer = ''
+        self.leaderboard_frame.pack_forget()
+        self.home_frame.pack(fill='both', expand=True)
+        self.button1.place(relx=0.3, rely=0.6, anchor=tk.CENTER)
+        self.button2.place(relx=0.7, rely=0.6, anchor=tk.CENTER)
+        self.name_frame.pack(fill='both', expand=True)
+        self.name_entry.delete(0, 'end')  # Clear the name entry field
 
 if __name__ == "__main__":
     app = QuizApp()
