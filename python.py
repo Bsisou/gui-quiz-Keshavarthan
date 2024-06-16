@@ -90,8 +90,8 @@ class QuizApp(tk.Tk):
         # Create widgets for the quiz frame
         self.question_label = ctk.CTkLabel(self.quiz_frame, text="")
         self.options_var = tk.StringVar()
-        self.options_buttons = [tk.Radiobutton(self.quiz_frame, text="Option", variable=self.options_var) for _ in
-                                range(4)]
+        self.options_buttons = [tk.Radiobutton(self.quiz_frame, text="Option", variable=self.options_var) for _ in range(4)]
+
         self.submit_button = ctk.CTkButton(self.quiz_frame, text='Submit Answer', command=self.check_answer)
 
         # Create widgets for the leaderboard frame
