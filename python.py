@@ -90,7 +90,7 @@ class QuizApp(tk.Tk):
         # Create widgets for the quiz frame
         self.question_label = ctk.CTkLabel(self.quiz_frame, text="")
         self.options_var = tk.StringVar()
-        self.options_buttons = [tk.Radiobutton(self.quiz_frame, text="Option", variable=self.options_var) for _ in range(4)]
+        self.options_buttons = [ctk.CTkRadioButton(self.quiz_frame, text="Option", variable=self.options_var, value="i") for _ in range(4)]
 
         self.submit_button = ctk.CTkButton(self.quiz_frame, text='Submit Answer', command=self.check_answer)
 
@@ -136,7 +136,7 @@ class QuizApp(tk.Tk):
         self.question_label.configure(text=self.current_question)
         self.question_label.pack(pady=20)
         for i, option in enumerate(options):
-            self.options_buttons[i].configure(text=option, value=option)
+            self.options_buttons[i].configure(text=option)
             self.options_buttons[i].pack(pady=5)
         self.options_var.set(options[0])  # Set default value
         self.submit_button.pack(pady=20)
