@@ -22,7 +22,7 @@ class QuizApp(tk.Tk):
             bg_label.pack(fill='both', expand=True)
             bg_label.image = self.name_bg_image
 
-        self.home_frame = tk.Frame(self, height=768, width=1024)
+        self.home_frame = tk.Frame(self)
 
         set_background(self.home_frame)
 
@@ -87,16 +87,23 @@ class QuizApp(tk.Tk):
         self.name_entry = ctk.CTkEntry(self.name_frame)
         self.enter_button = ctk.CTkButton(self.name_frame, text='Enter', command=self.validate_name, font=buttonfont2)
 
-        # Create widgets for the quiz frame
+        # Create widgets for the quiz frame using grid
         self.question_label = ctk.CTkLabel(self.quiz_frame, text="")
-        self.options_var = tk.StringVar()
-        self.options_buttons = [ctk.CTkRadioButton(self.quiz_frame, text="Option", variable=self.options_var, value="i") for _ in range(4)]
+        self.question_label.grid(row=0, column=0, columnspan=2, pady=20)  # Span across all columns
+
+        self.options_var = tk.IntVar()
+        self.options_buttons = [ctk.CTkRadioButton(self.quiz_frame, text="Option", variable=self.options_var, value=i)
+                                for i in range(4)]
+        # Positioning will be handled in display_question
 
         self.submit_button = ctk.CTkButton(self.quiz_frame, text='Submit Answer', command=self.check_answer)
+        self.submit_button.grid(row=3, column=0, columnspan=2, pady=20)  # Span across all columns
 
         # Create widgets for the leaderboard frame
         self.score_label = ctk.CTkLabel(self.leaderboard_frame, text="")
         self.home_button = ctk.CTkButton(self.leaderboard_frame, text='Return to Home', command=self.return_to_home)
+
+
 
     def start_quiz(self):
         self.home_frame.pack_forget()
@@ -117,6 +124,23 @@ class QuizApp(tk.Tk):
             self.quiz_frame.pack(fill='both', expand=True)
             self.display_question()
 
+    def display_question(self):
+        shuffle(self.questions)
+        self.current_question, options = self.questions[0]
+        correct_answer_text = options[0]  # Assuming the first option is always the correct one before shuffling
+        shuffle(options)
+        self.correct_answer = options.index(correct_answer_text)  # Update the index after shuffling
+        self.question_label.configure(text=self.current_question)
+
+        # Arrange options in a 2x2 grid
+        grid_positions = [(1, 0), (1, 1), (2, 0), (2, 1)]
+        for i, option in enumerate(options):
+            self.options_buttons[i].configure(text=option)
+            self.options_buttons[i].grid(row=grid_positions[i][0], column=grid_positions[i][1], padx=10, pady=5,
+                                         sticky="ew")
+
+        self.options_var.set(-1)  # Reset default value to an invalid option
+
     def check_answer(self):
         selected_option = self.options_var.get()
         if selected_option == self.correct_answer:
@@ -127,19 +151,9 @@ class QuizApp(tk.Tk):
                 self.display_question()
             else:
                 self.show_leaderboard()
-
-    def display_question(self):
-        shuffle(self.questions)
-        self.current_question, options = self.questions[0]
-        self.correct_answer = options[0]
-        shuffle(options)
-        self.question_label.configure(text=self.current_question)
-        self.question_label.pack(pady=20)
-        for i, option in enumerate(options):
-            self.options_buttons[i].configure(text=option)
-            self.options_buttons[i].pack(pady=5)
-        self.options_var.set(options[0])  # Set default value
-        self.submit_button.pack(pady=20)
+        # Ensure the submit button is visible and correctly placed using grid
+        self.submit_button.grid_forget()  # Remove the button from the layout and then re-grid it
+        self.submit_button.grid(row=3, column=0, columnspan=2, pady=20)  # Span across all columns
 
     def show_leaderboard(self):
         self.quiz_frame.pack_forget()
