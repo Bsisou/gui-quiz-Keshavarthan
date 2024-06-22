@@ -131,29 +131,53 @@ class QuizApp(tk.Tk):
         shuffle(options)
         self.correct_answer = options.index(correct_answer_text)  # Update the index after shuffling
         self.question_label.configure(text=self.current_question)
+        self.question_label.grid(row=0, column=0, columnspan=2, pady=20)
 
-        # Arrange options in a 2x2 grid
-        grid_positions = [(1, 0), (1, 1), (2, 0), (2, 1)]
+        # Adjust the layout of the radio buttons to be more rectangular and centered
+        grid_positions = [(1, 0), (1, 1), (2, 0), (2, 1)]  # Positions for a 2x2 grid
         for i, option in enumerate(options):
             self.options_buttons[i].configure(text=option)
-            self.options_buttons[i].grid(row=grid_positions[i][0], column=grid_positions[i][1], padx=10, pady=5,
-                                         sticky="ew")
+            self.options_buttons[i].grid(row=grid_positions[i][0], column=grid_positions[i][1], pady=10, padx=20)
 
         self.options_var.set(-1)  # Reset default value to an invalid option
 
+        # Ensure the submit button is visible and correctly placed
+        self.submit_button.grid(row=3, column=0, columnspan=2, pady=20)
+
+        # Center the grid within the quiz frame by configuring the grid
+        self.quiz_frame.grid_columnconfigure(0, weight=1)
+        self.quiz_frame.grid_columnconfigure(1, weight=1)
+        self.quiz_frame.grid_rowconfigure(0, weight=1)
+        self.quiz_frame.grid_rowconfigure(1, weight=1)
+        self.quiz_frame.grid_rowconfigure(2, weight=1)
+        self.quiz_frame.grid_rowconfigure(3, weight=1)
+
     def check_answer(self):
         selected_option = self.options_var.get()
+        if selected_option == -1:
+            messagebox.showerror("No Selection", "Please select an option before submitting.")
+            return  # Exit the method if no option is selected
+
+        # Disable the submit button immediately after a selection to prevent multiple submissions
+        self.submit_button.configure(state='disabled')
+
+        # Check if the selected option is correct
         if selected_option == self.correct_answer:
             self.user_score += 1
+
+        # Use after() to delay the execution of process_next, allowing the UI to update
+        self.after(500, self.process_next)  # Delay of 500 milliseconds before proceeding to the next question
+
+
+
+    def process_next(self):
         if self.questions:  # Check if there are still questions left
             self.questions.pop(0)
             if self.questions:  # Check again after popping
                 self.display_question()
             else:
                 self.show_leaderboard()
-        # Ensure the submit button is visible and correctly placed using grid
-        self.submit_button.grid_forget()  # Remove the button from the layout and then re-grid it
-        self.submit_button.grid(row=3, column=0, columnspan=2, pady=20)  # Span across all columns
+        self.submit_button.configure(state='normal')
 
     def show_leaderboard(self):
         self.quiz_frame.pack_forget()
@@ -163,7 +187,6 @@ class QuizApp(tk.Tk):
         self.home_button.pack(pady=20)
 
     def return_to_home(self):
-        # Reset game state
         self.user_name = ''
         self.user_score = 0
         self.questions = [
@@ -178,6 +201,7 @@ class QuizApp(tk.Tk):
             ("What is the smallest planet in our solar system?", ["Mercury", "Venus", "Mars", "Earth"]),
             ("What is the largest country in the world by area?", ["Russia", "Canada", "China", "United States"]),
             ("What is the longest river in the world?", ["Nile", "Amazon", "Yangtze", "Mississippi"]),
+            ...
         ]
         self.current_question = 0
         self.correct_answer = ''
