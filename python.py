@@ -1,8 +1,36 @@
 import tkinter as tk
 import customtkinter as ctk
-from tkinter import PhotoImage,messagebox
+from tkinter import PhotoImage, messagebox
 from random import shuffle
 from time import sleep
+
+class ToolTip:
+    def __init__(self, widget, text):
+        self.widget = widget
+        self.text = text
+        self.tooltip_window = None
+        widget.bind("<Enter>", self.show_tooltip)
+        widget.bind("<Leave>", self.hide_tooltip)
+
+    def show_tooltip(self, event):
+        if self.tooltip_window or not self.text:
+            return
+        x, y, _, _ = self.widget.bbox("insert")
+        x += self.widget.winfo_rootx() + 25
+        y += self.widget.winfo_rooty() + 25
+        self.tooltip_window = tw = tk.Toplevel(self.widget)
+        tw.wm_overrideredirect(True)
+        tw.wm_geometry(f"+{x}+{y}")
+        label = tk.Label(tw, text=self.text, justify='left',
+                         background="#ffffe0", relief='solid', borderwidth=1,
+                         font=("tahoma", "8", "normal"))
+        label.pack(ipadx=1)
+
+    def hide_tooltip(self, event):
+        tw = self.tooltip_window
+        self.tooltip_window = None
+        if tw:
+            tw.destroy()
 
 class QuizApp(tk.Tk):
     def __init__(self):
@@ -23,7 +51,6 @@ class QuizApp(tk.Tk):
             bg_label.image = self.name_bg_image
 
         self.home_frame = tk.Frame(self)
-
         set_background(self.home_frame)
 
         self.bg_label = tk.Label(self, image=self.bg_image)
@@ -51,11 +78,11 @@ class QuizApp(tk.Tk):
         button_font = ctk.CTkFont(family="Helvetica", size=30)
 
         self.button1 = ctk.CTkButton(self, text="Quiz", width=200, height=100, fg_color="#76ABAE", font=button_font,
-                                border_width=2, corner_radius=2, command=self.start_quiz)
+                                     border_width=2, corner_radius=2, command=self.start_quiz)
         self.button1.place(relx=0.3, rely=0.6, anchor=tk.CENTER)
 
         self.button2 = ctk.CTkButton(self, text="Factoids", width=200, height=100, fg_color="#76ABAE", font=button_font,
-                                border_width=2, corner_radius=2)
+                                     border_width=2, corner_radius=2)
         self.button2.place(relx=0.7, rely=0.6, anchor=tk.CENTER)
 
         self.user_name = ''
@@ -69,8 +96,7 @@ class QuizApp(tk.Tk):
             ("What is the meal eaten during morning called", ["Breakfast", "Lunch", "Dinner", "Brunch"]),
             ("What is the capital of Japan?", ["Tokyo", "Kyoto", "Osaka", "Hiroshima"]),
             ("What is the tallest mountain in the world?", ["Mount Everest", "K2", "Kangchenjunga", "Lhotse"]),
-            ("What is the largest ocean in the world?",
-             ["Pacific Ocean", "Atlantic Ocean", "Indian Ocean", "Arctic Ocean"]),
+            ("What is the largest ocean in the world?", ["Pacific Ocean", "Atlantic Ocean", "Indian Ocean", "Arctic Ocean"]),
             ("What is the smallest planet in our solar system?", ["Mercury", "Venus", "Mars", "Earth"]),
             ("What is the largest country in the world by area?", ["Russia", "Canada", "China", "United States"]),
             ("What is the longest river in the world?", ["Nile", "Amazon", "Yangtze", "Mississippi"]),
@@ -86,6 +112,12 @@ class QuizApp(tk.Tk):
         self.name_label = ctk.CTkLabel(self.name_frame, text="Enter your name:")
         self.name_entry = ctk.CTkEntry(self.name_frame)
         self.enter_button = ctk.CTkButton(self.name_frame, text='Enter', command=self.validate_name, font=buttonfont2)
+        self.name_label.pack(pady=10)
+        self.name_entry.pack(pady=10)
+        self.enter_button.pack(pady=10)
+
+        # Tooltip for name entry
+        ToolTip(self.name_entry, "Enter your full name without any numbers or special characters.")
 
         # Create widgets for the quiz frame using grid
         self.question_label = ctk.CTkLabel(self.quiz_frame, text="")
@@ -99,92 +131,94 @@ class QuizApp(tk.Tk):
         self.submit_button = ctk.CTkButton(self.quiz_frame, text='Submit Answer', command=self.check_answer)
         self.submit_button.grid(row=3, column=0, columnspan=2, pady=20)  # Span across all columns
 
+        # Status label for current question and score
+        self.status_label = ctk.CTkLabel(self.quiz_frame, text="")
+        self.status_label.grid(row=4, column=0, columnspan=2, pady=10)
+
+        # Back button to return to the previous screen
+        self.back_button = ctk.CTkButton(self.quiz_frame, text="Back", command=self.return_to_home)
+        self.back_button.grid(row=5, column=0, pady=10)
+
         # Create widgets for the leaderboard frame
         self.score_label = ctk.CTkLabel(self.leaderboard_frame, text="")
         self.home_button = ctk.CTkButton(self.leaderboard_frame, text='Return to Home', command=self.return_to_home)
-
-
+        self.score_label.pack(pady=20)
+        self.home_button.pack(pady=20)
 
     def start_quiz(self):
         self.home_frame.pack_forget()
         self.button1.place_forget()
         self.button2.place_forget()
-        self.name_entry.place(relx = 0.5, rely=0.6, anchor=tk.CENTER )
-        self.enter_button.place(relx = 0.5, rely=0.7, anchor=tk.CENTER )
+        self.name_entry.place(relx=0.5, rely=0.6, anchor=tk.CENTER)
+        self.enter_button.place(relx=0.5, rely=0.7, anchor=tk.CENTER)
 
     def validate_name(self):
-        user_name = self.name_entry.get()
-        if not user_name.isalpha():
-            messagebox.showerror("Invalid Name", "Please enter a valid name (letters only).")
-        elif len(user_name) > 20:
-            messagebox.showerror("Invalid Name", "Please enter a name with no more than 20 characters.")
-        else:
-            self.user_name = user_name
-            self.name_frame.pack_forget()
-            self.quiz_frame.pack(fill='both', expand=True)
+        while True:
+            user_name = self.name_entry.get()
+            if not user_name.isalpha():
+                messagebox.showerror("Invalid Name", "Please enter a valid name (letters only).")
+                return
+            elif len(user_name) > 20:
+                messagebox.showerror("Invalid Name", "Please enter a name with no more than 20 characters.")
+                return
+            else:
+                self.user_name = user_name
+                self.name_frame.pack_forget()
+                self.quiz_frame.pack(fill='both', expand=True)
+                self.display_question()
+                break
+
+    def process_next(self):
+        if self.questions:
+            self.questions.pop(0)
+        if self.questions:
             self.display_question()
+        else:
+            self.show_leaderboard()
+            self.submit_button.configure(state='normal')
 
     def display_question(self):
-        shuffle(self.questions)
-        self.current_question, options = self.questions[0]
-        correct_answer_text = options[0]  # Assuming the first option is always the correct one before shuffling
-        shuffle(options)
-        self.correct_answer = options.index(correct_answer_text)  # Update the index after shuffling
-        self.question_label.configure(text=self.current_question)
-        self.question_label.grid(row=0, column=0, columnspan=2, pady=20)
+        if not self.questions:
+            self.show_leaderboard()
+            return
 
-        # Adjust the layout of the radio buttons to be more rectangular and centered
-        grid_positions = [(1, 0), (1, 1), (2, 0), (2, 1)]  # Positions for a 2x2 grid
+        self.current_question, options = self.questions[0]
+        correct_answer_text = options[0]
+        shuffle(options)
+        self.correct_answer = options.index(correct_answer_text)
+        self.question_label.configure(text=self.current_question)
+        self.question_label.grid(row=0, column=0, columnspan=4, pady=20)
+
+        grid_positions = [(1, 1), (1, 2), (2, 1), (2, 2)]
         for i, option in enumerate(options):
             self.options_buttons[i].configure(text=option)
-            self.options_buttons[i].grid(row=grid_positions[i][0], column=grid_positions[i][1], pady=10, padx=20)
+            self.options_buttons[i].grid(row=grid_positions[i][0], column=grid_positions[i][1], pady=10, padx=20,
+                                         sticky="nsew")
 
-        self.options_var.set(-1)  # Reset default value to an invalid option
-
-        # Ensure the submit button is visible and correctly placed
-        self.submit_button.grid(row=3, column=0, columnspan=2, pady=20)
-
-        # Center the grid within the quiz frame by configuring the grid
-        self.quiz_frame.grid_columnconfigure(0, weight=1)
-        self.quiz_frame.grid_columnconfigure(1, weight=1)
-        self.quiz_frame.grid_rowconfigure(0, weight=1)
-        self.quiz_frame.grid_rowconfigure(1, weight=1)
-        self.quiz_frame.grid_rowconfigure(2, weight=1)
-        self.quiz_frame.grid_rowconfigure(3, weight=1)
+        self.options_var.set(-1)
+        self.quiz_frame.columnconfigure(0, weight=1)
+        self.quiz_frame.columnconfigure(1, weight=1)
+        self.quiz_frame.columnconfigure(2, weight=1)
+        self.quiz_frame.columnconfigure(3, weight=1)
+        self.submit_button.configure(state='normal')
+        self.submit_button.grid(row=3, column=1, columnspan=2, pady=20)
+        self.status_label.configure(
+            text=f"Question {self.current_question + 1} of {len(self.questions)} | Score: {self.user_score}")
 
     def check_answer(self):
         selected_option = self.options_var.get()
         if selected_option == -1:
             messagebox.showerror("No Selection", "Please select an option before submitting.")
-            return  # Exit the method if no option is selected
-
-        # Disable the submit button immediately after a selection to prevent multiple submissions
+            return
         self.submit_button.configure(state='disabled')
-
-        # Check if the selected option is correct
         if selected_option == self.correct_answer:
             self.user_score += 1
-
-        # Use after() to delay the execution of process_next, allowing the UI to update
-        self.after(500, self.process_next)  # Delay of 500 milliseconds before proceeding to the next question
-
-
-
-    def process_next(self):
-        if self.questions:  # Check if there are still questions left
-            self.questions.pop(0)
-            if self.questions:  # Check again after popping
-                self.display_question()
-            else:
-                self.show_leaderboard()
-        self.submit_button.configure(state='normal')
+        self.after(200, self.process_next)
 
     def show_leaderboard(self):
         self.quiz_frame.pack_forget()
         self.leaderboard_frame.pack(fill='both', expand=True)
         self.score_label.configure(text=f"{self.user_name}, your score is: {self.user_score}")
-        self.score_label.pack(pady=20)
-        self.home_button.pack(pady=20)
 
     def return_to_home(self):
         self.user_name = ''
@@ -201,7 +235,6 @@ class QuizApp(tk.Tk):
             ("What is the smallest planet in our solar system?", ["Mercury", "Venus", "Mars", "Earth"]),
             ("What is the largest country in the world by area?", ["Russia", "Canada", "China", "United States"]),
             ("What is the longest river in the world?", ["Nile", "Amazon", "Yangtze", "Mississippi"]),
-            ...
         ]
         self.current_question = 0
         self.correct_answer = ''
@@ -210,7 +243,7 @@ class QuizApp(tk.Tk):
         self.button1.place(relx=0.3, rely=0.6, anchor=tk.CENTER)
         self.button2.place(relx=0.7, rely=0.6, anchor=tk.CENTER)
         self.name_frame.pack(fill='both', expand=True)
-        self.name_entry.delete(0, 'end')  # Clear the name entry field
+        self.name_entry.delete(0, 'end')
 
 if __name__ == "__main__":
     app = QuizApp()
