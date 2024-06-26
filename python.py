@@ -2,8 +2,8 @@ import tkinter as tk
 import customtkinter as ctk
 from tkinter import PhotoImage, messagebox
 from random import shuffle
-from time import sleep
 
+# Class to create tooltips for widgets, must be put before the main quiz class.
 class ToolTip:
     def __init__(self, widget, text):
         self.widget = widget
@@ -32,6 +32,7 @@ class ToolTip:
         if tw:
             tw.destroy()
 
+# Main application class for the quiz
 class QuizApp(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -40,16 +41,19 @@ class QuizApp(tk.Tk):
         self.bg_image = PhotoImage(file="C:/Users/educa/OneDrive/Pictures/bg3.png")
         self.name_bg_image = PhotoImage(file="C:/Users/educa/OneDrive/Pictures/usernamebg.png")
 
+        # Function to set background image for a frame
         def set_background(frame):
             bg_label = tk.Label(frame, image=self.bg_image)
             bg_label.pack(fill='both', expand=True)
             bg_label.image = self.bg_image
 
+        # Function to set background image for the name entry frame
         def set_name_background(frame):
             bg_label = tk.Label(frame, image=self.name_bg_image)
             bg_label.pack(fill='both', expand=True)
             bg_label.image = self.name_bg_image
 
+        # Home frame setup
         self.home_frame = tk.Frame(self)
         set_background(self.home_frame)
 
@@ -71,12 +75,13 @@ class QuizApp(tk.Tk):
         self.leaderboard_frame = ctk.CTkFrame(self)
         self.leaderboard_frame.pack_forget()
 
-        # Home screen button
+        # Home screen button to start the quiz
         self.quiz_button = ctk.CTkButton(self.home_frame, text='Start Quiz', command=self.start_quiz)
         self.quiz_button.pack(pady=20)
 
         button_font = ctk.CTkFont(family="Helvetica", size=30)
 
+        # Buttons for navigating to quiz and factoids
         self.button1 = ctk.CTkButton(self, text="Quiz", width=200, height=100, fg_color="#76ABAE", font=button_font,
                                      border_width=2, corner_radius=2, command=self.start_quiz)
         self.button1.place(relx=0.3, rely=0.6, anchor=tk.CENTER)
@@ -88,7 +93,7 @@ class QuizApp(tk.Tk):
         self.user_name = ''
         self.user_score = 0
 
-        # Quiz questions and answers
+        # List of quiz questions and answers
         self.questions = [
             ("What is the capital of France?", ["Paris", "London", "Berlin", "Rome"]),
             ("Which planet is known as the Red Planet?", ["Mars", "Jupiter", "Saturn", "Venus"]),
@@ -106,6 +111,7 @@ class QuizApp(tk.Tk):
 
         self.initialize_quiz_ui()
 
+    # Initialize the UI components for the quiz
     def initialize_quiz_ui(self):
         buttonfont2 = ctk.CTkFont(family="Helvetica", size=20)
         # Create widgets for the name entry frame
@@ -124,10 +130,8 @@ class QuizApp(tk.Tk):
         self.question_label.grid(row=0, column=0, columnspan=2, pady=20)  # Span across all columns
 
         self.options_var = tk.IntVar()
-        self.options_buttons = [ctk.CTkRadioButton(self.quiz_frame, text="Option", variable=self.options_var, value=i)
-                                for i in range(4)]
+        self.options_buttons = [ctk.CTkRadioButton(self.quiz_frame, text="Option", variable=self.options_var, value=i) for i in range(4)]
         # Positioning will be handled in display_question
-
         self.submit_button = ctk.CTkButton(self.quiz_frame, text='Submit Answer', command=self.check_answer)
         self.submit_button.grid(row=3, column=0, columnspan=2, pady=20)  # Span across all columns
 
@@ -192,8 +196,7 @@ class QuizApp(tk.Tk):
         grid_positions = [(1, 1), (1, 2), (2, 1), (2, 2)]
         for i, option in enumerate(options):
             self.options_buttons[i].configure(text=option)
-            self.options_buttons[i].grid(row=grid_positions[i][0], column=grid_positions[i][1], pady=10, padx=20,
-                                         sticky="nsew")
+            self.options_buttons[i].grid(row=grid_positions[i][0], column=grid_positions[i][1], pady=10, padx=20, sticky="nsew")
 
         self.options_var.set(-1)
         self.quiz_frame.columnconfigure(0, weight=1)
@@ -202,8 +205,7 @@ class QuizApp(tk.Tk):
         self.quiz_frame.columnconfigure(3, weight=1)
         self.submit_button.configure(state='normal')
         self.submit_button.grid(row=3, column=1, columnspan=2, pady=20)
-        self.status_label.configure(
-            text=f"Question {self.current_question + 1} of {len(self.questions)} | Score: {self.user_score}")
+        self.status_label.configure(text=f"Question {len(self.questions) - len(self.questions) + 1} of {len(self.questions)} | Score: {str(self.user_score)}")
 
     def check_answer(self):
         selected_option = self.options_var.get()
@@ -230,8 +232,7 @@ class QuizApp(tk.Tk):
             ("What is the meal eaten during morning called", ["Breakfast", "Lunch", "Dinner", "Brunch"]),
             ("What is the capital of Japan?", ["Tokyo", "Kyoto", "Osaka", "Hiroshima"]),
             ("What is the tallest mountain in the world?", ["Mount Everest", "K2", "Kangchenjunga", "Lhotse"]),
-            ("What is the largest ocean in the world?",
-             ["Pacific Ocean", "Atlantic Ocean", "Indian Ocean", "Arctic Ocean"]),
+            ("What is the largest ocean in the world?", ["Pacific Ocean", "Atlantic Ocean", "Indian Ocean", "Arctic Ocean"]),
             ("What is the smallest planet in our solar system?", ["Mercury", "Venus", "Mars", "Earth"]),
             ("What is the largest country in the world by area?", ["Russia", "Canada", "China", "United States"]),
             ("What is the longest river in the world?", ["Nile", "Amazon", "Yangtze", "Mississippi"]),
