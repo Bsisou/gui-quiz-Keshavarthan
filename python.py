@@ -75,6 +75,18 @@ class QuizApp(tk.Tk):
         self.leaderboard_frame = ctk.CTkFrame(self)
         self.leaderboard_frame.pack_forget()
 
+        # Fun fact frame (hidden by default)
+        self.funfact_frame = ctk.CTkFrame(self)
+        self.funfact_frame.pack_forget()
+
+        # Fun fact label
+        self.funfact_label = ctk.CTkLabel(self.funfact_frame, text="", wraplength=800)
+        self.funfact_label.pack(pady=20)
+
+        # Back button for fun fact frame
+        self.funfact_back_button = ctk.CTkButton(self.funfact_frame, text="Back", command=self.return_to_home)
+        self.funfact_back_button.pack(pady=20)
+
         # Home screen button to start the quiz
         self.quiz_button = ctk.CTkButton(self.home_frame, text='Start Quiz', command=self.start_quiz)
         self.quiz_button.pack(pady=20)
@@ -87,7 +99,7 @@ class QuizApp(tk.Tk):
         self.button1.place(relx=0.3, rely=0.6, anchor=tk.CENTER)
 
         self.button2 = ctk.CTkButton(self, text="Factoids", width=200, height=100, fg_color="#76ABAE", font=button_font,
-                                     border_width=2, corner_radius=2)
+                                     border_width=2, corner_radius=2, command=self.show_funfact)
         self.button2.place(relx=0.7, rely=0.6, anchor=tk.CENTER)
 
         self.user_name = ''
@@ -101,13 +113,40 @@ class QuizApp(tk.Tk):
             ("What is the meal eaten during morning called", ["Breakfast", "Lunch", "Dinner", "Brunch"]),
             ("What is the capital of Japan?", ["Tokyo", "Kyoto", "Osaka", "Hiroshima"]),
             ("What is the tallest mountain in the world?", ["Mount Everest", "K2", "Kangchenjunga", "Lhotse"]),
-            ("What is the largest ocean in the world?", ["Pacific Ocean", "Atlantic Ocean", "Indian Ocean", "Arctic Ocean"]),
+            ("What is the largest ocean in the world?",
+             ["Pacific Ocean", "Atlantic Ocean", "Indian Ocean", "Arctic Ocean"]),
             ("What is the smallest planet in our solar system?", ["Mercury", "Venus", "Mars", "Earth"]),
             ("What is the largest country in the world by area?", ["Russia", "Canada", "China", "United States"]),
             ("What is the longest river in the world?", ["Nile", "Amazon", "Yangtze", "Mississippi"]),
+            ("What is the chemical symbol for the element with atomic number 1?", ["H", "He", "Li", "Be"]),
+            ("Who developed the theory of general relativity?",
+             ["Albert Einstein", "Isaac Newton", "Galileo Galilei", "Nikola Tesla"]),
+            ("What is the hardest natural substance on Earth?", ["Diamond", "Graphite", "Corundum", "Topaz"]),
+            ("Which country has the most natural lakes?", ["Canada", "Russia", "Brazil", "United States"]),
+            ("What is the smallest bone in the human body?", ["Stapes", "Malleus", "Incus", "Humerus"]),
+            ("What is the speed of light in a vacuum?",
+             ["299,792,458 meters per second", "150,000,000 meters per second", "1,080,000,000 meters per second",
+              "300,000,000 meters per second"]),
+            ("Who wrote the play 'Hamlet'?",
+             ["William Shakespeare", "Christopher Marlowe", "Ben Jonson", "John Webster"]),
+            ("What is the powerhouse of the cell?", ["Mitochondria", "Nucleus", "Ribosome", "Endoplasmic Reticulum"]),
+            ("What is the capital of Australia?", ["Canberra", "Sydney", "Melbourne", "Brisbane"]),
+            ("What is the largest desert in the world?",
+             ["Antarctic Desert", "Sahara Desert", "Arabian Desert", "Gobi Desert"]),
         ]
+        shuffle(self.questions)  # Shuffle the questions
+        self.questions = self.questions[:10]  # Select only the first 10 questions
         self.current_question = 0
         self.correct_answer = ''
+
+        # List of fun facts
+        self.funfacts = [
+            "Honey never spoils. Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3,000 years old and still edible.",
+            "A day on Venus is longer than a year on Venus. It takes Venus longer to rotate once on its axis (243 Earth days) than it does to complete one orbit of the Sun (225 Earth days).",
+            "Bananas are berries, but strawberries aren't. Botanically, a berry is a fruit produced from the ovary of a single flower with seeds embedded in the flesh.",
+            "Octopuses have three hearts. Two pump blood to the gills, while the third pumps it to the rest of the body.",
+            "There are more stars in the universe than grains of sand on all the Earth's beaches. The observable universe has an estimated 1,000,000,000,000,000,000,000,000 stars."
+        ]
 
         self.initialize_quiz_ui()
 
@@ -162,8 +201,8 @@ class QuizApp(tk.Tk):
             if not user_name.isalpha():
                 messagebox.showerror("Invalid Name", "Please enter a valid name (letters only).")
                 return
-            elif len(user_name) > 20:
-                messagebox.showerror("Invalid Name", "Please enter a name with no more than 20 characters.")
+            elif len(user_name) > 15:
+                messagebox.showerror("Invalid Name", "Please enter a name with no more than 15 characters.")
                 return
             else:
                 self.user_name = user_name
@@ -222,6 +261,14 @@ class QuizApp(tk.Tk):
         self.leaderboard_frame.pack(fill='both', expand=True)
         self.score_label.configure(text=f"{self.user_name}, your score is: {self.user_score}")
 
+    def show_funfact(self):
+        self.home_frame.pack_forget()
+        self.name_frame.pack_forget()  # Ensure the name frame is hidden
+        self.button1.place_forget()
+        self.button2.place_forget()
+        self.funfact_frame.pack(fill='both', expand=True)
+        self.funfact_label.configure(text=self.funfacts[0])  # Display the first fun fact
+
     def return_to_home(self):
         self.user_name = ''
         self.user_score = 0
@@ -232,14 +279,32 @@ class QuizApp(tk.Tk):
             ("What is the meal eaten during morning called", ["Breakfast", "Lunch", "Dinner", "Brunch"]),
             ("What is the capital of Japan?", ["Tokyo", "Kyoto", "Osaka", "Hiroshima"]),
             ("What is the tallest mountain in the world?", ["Mount Everest", "K2", "Kangchenjunga", "Lhotse"]),
-            ("What is the largest ocean in the world?", ["Pacific Ocean", "Atlantic Ocean", "Indian Ocean", "Arctic Ocean"]),
+            ("What is the largest ocean in the world?",
+             ["Pacific Ocean", "Atlantic Ocean", "Indian Ocean", "Arctic Ocean"]),
             ("What is the smallest planet in our solar system?", ["Mercury", "Venus", "Mars", "Earth"]),
             ("What is the largest country in the world by area?", ["Russia", "Canada", "China", "United States"]),
             ("What is the longest river in the world?", ["Nile", "Amazon", "Yangtze", "Mississippi"]),
+            ("What is the chemical symbol for the element with atomic number 1?", ["H", "He", "Li", "Be"]),
+            ("Who developed the theory of general relativity?",
+             ["Albert Einstein", "Isaac Newton", "Galileo Galilei", "Nikola Tesla"]),
+            ("What is the hardest natural substance on Earth?", ["Diamond", "Graphite", "Corundum", "Topaz"]),
+            ("Which country has the most natural lakes?", ["Canada", "Russia", "Brazil", "United States"]),
+            ("What is the smallest bone in the human body?", ["Stapes", "Malleus", "Incus", "Humerus"]),
+            ("What is the speed of light in a vacuum?",
+             ["299,792,458 meters per second", "150,000,000 meters per second", "1,080,000,000 meters per second",
+              "300,000,000 meters per second"]),
+            ("Who wrote the play 'Hamlet'?",
+             ["William Shakespeare", "Christopher Marlowe", "Ben Jonson", "John Webster"]),
+            ("What is the powerhouse of the cell?", ["Mitochondria", "Nucleus", "Ribosome", "Endoplasmic Reticulum"]),
+            ("What is the capital of Australia?", ["Canberra", "Sydney", "Melbourne", "Brisbane"]),
+            ("What is the largest desert in the world?",
+             ["Antarctic Desert", "Sahara Desert", "Arabian Desert", "Gobi Desert"]),
         ]
         self.current_question = 0
         self.correct_answer = ''
         self.leaderboard_frame.pack_forget()
+        self.quiz_frame.pack_forget()  # Ensure the quiz frame is hidden
+        self.funfact_frame.pack_forget()  # Ensure the fun fact frame is hidden
         self.home_frame.pack(fill='both', expand=True)
         self.button1.place(relx=0.3, rely=0.6, anchor=tk.CENTER)
         self.button2.place(relx=0.7, rely=0.6, anchor=tk.CENTER)
