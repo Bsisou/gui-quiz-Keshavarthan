@@ -3,6 +3,7 @@ import customtkinter as ctk
 from tkinter import PhotoImage, messagebox
 from random import shuffle
 
+
 # Class to create tooltips for widgets, must be put before the main quiz class.
 class ToolTip:
     def __init__(self, widget, text):
@@ -31,6 +32,7 @@ class ToolTip:
         self.tooltip_window = None
         if tw:
             tw.destroy()
+
 
 # Main application class for the quiz
 class QuizApp(tk.Tk):
@@ -106,7 +108,7 @@ class QuizApp(tk.Tk):
         self.user_score = 0
 
         # List of quiz questions and answers
-        self.questions = [
+        self.original_questions = [
             ("What is the capital of France?", ["Paris", "London", "Berlin", "Rome"]),
             ("Which planet is known as the Red Planet?", ["Mars", "Jupiter", "Saturn", "Venus"]),
             ("What is the largest mammal in the world?", ["Blue whale", "Elephant", "Giraffe", "Hippopotamus"]),
@@ -134,10 +136,7 @@ class QuizApp(tk.Tk):
             ("What is the largest desert in the world?",
              ["Antarctic Desert", "Sahara Desert", "Arabian Desert", "Gobi Desert"]),
         ]
-        shuffle(self.questions)  # Shuffle the questions
-        self.questions = self.questions[:10]  # Select only the first 10 questions
-        self.current_question = 0
-        self.correct_answer = ''
+        self.reset_questions()
 
         # List of fun facts
         self.funfacts = [
@@ -169,14 +168,15 @@ class QuizApp(tk.Tk):
         self.question_label.grid(row=0, column=0, columnspan=2, pady=20)  # Span across all columns
 
         self.options_var = tk.IntVar()
-        self.options_buttons = [ctk.CTkRadioButton(self.quiz_frame, text="Option", variable=self.options_var, value=i) for i in range(4)]
+        self.options_buttons = [ctk.CTkRadioButton(self.quiz_frame, text="Option", variable=self.options_var, value=i)
+                                for i in range(4)]
         # Positioning will be handled in display_question
         self.submit_button = ctk.CTkButton(self.quiz_frame, text='Submit Answer', command=self.check_answer)
         self.submit_button.grid(row=3, column=0, columnspan=2, pady=20)  # Span across all columns
 
         # Status label for current question and score
         self.status_label = ctk.CTkLabel(self.quiz_frame, text="")
-        self.status_label.grid(row=4, column=0, columnspan=2, pady=10)
+        self.status_label.grid(row=0, column=0, columnspan=2, pady=10)
 
         # Back button to return to the previous screen
         self.back_button = ctk.CTkButton(self.quiz_frame, text="Back", command=self.return_to_home)
@@ -187,6 +187,11 @@ class QuizApp(tk.Tk):
         self.home_button = ctk.CTkButton(self.leaderboard_frame, text='Return to Home', command=self.return_to_home)
         self.score_label.pack(pady=20)
         self.home_button.pack(pady=20)
+
+    def reset_questions(self):
+        self.questions = self.original_questions.copy()
+        shuffle(self.questions)
+        self.questions = self.questions[:10]  # Select only the first 10 questions
 
     def start_quiz(self):
         self.home_frame.pack_forget()
@@ -230,12 +235,13 @@ class QuizApp(tk.Tk):
         shuffle(options)
         self.correct_answer = options.index(correct_answer_text)
         self.question_label.configure(text=self.current_question)
-        self.question_label.grid(row=0, column=0, columnspan=4, pady=20)
+        self.question_label.grid(row=1, column=0, columnspan=4, pady=20)  # Adjust the row value
 
-        grid_positions = [(1, 1), (1, 2), (2, 1), (2, 2)]
+        grid_positions = [(2, 1), (2, 2), (3, 1), (3, 2)]  # Adjust the row values
         for i, option in enumerate(options):
             self.options_buttons[i].configure(text=option)
-            self.options_buttons[i].grid(row=grid_positions[i][0], column=grid_positions[i][1], pady=10, padx=20, sticky="nsew")
+            self.options_buttons[i].grid(row=grid_positions[i][0], column=grid_positions[i][1], pady=10, padx=20,
+                                         sticky="nsew")
 
         self.options_var.set(-1)
         self.quiz_frame.columnconfigure(0, weight=1)
@@ -243,8 +249,9 @@ class QuizApp(tk.Tk):
         self.quiz_frame.columnconfigure(2, weight=1)
         self.quiz_frame.columnconfigure(3, weight=1)
         self.submit_button.configure(state='normal')
-        self.submit_button.grid(row=3, column=1, columnspan=2, pady=20)
-        self.status_label.configure(text=f"Question {len(self.questions) - len(self.questions) + 1} of {len(self.questions)} | Score: {str(self.user_score)}")
+        self.submit_button.grid(row=4, column=1, columnspan=2, pady=20)
+        self.status_label.configure(
+            text=f"Question {((len(self.original_questions) - len(self.questions)) % 10) + 1} of {min(len(self.original_questions), 10)} | Score: {str(self.user_score)}")
 
     def check_answer(self):
         selected_option = self.options_var.get()
@@ -272,34 +279,7 @@ class QuizApp(tk.Tk):
     def return_to_home(self):
         self.user_name = ''
         self.user_score = 0
-        self.questions = [
-            ("What is the capital of France?", ["Paris", "London", "Berlin", "Rome"]),
-            ("Which planet is known as the Red Planet?", ["Mars", "Jupiter", "Saturn", "Venus"]),
-            ("What is the largest mammal in the world?", ["Blue whale", "Elephant", "Giraffe", "Hippopotamus"]),
-            ("What is the meal eaten during morning called", ["Breakfast", "Lunch", "Dinner", "Brunch"]),
-            ("What is the capital of Japan?", ["Tokyo", "Kyoto", "Osaka", "Hiroshima"]),
-            ("What is the tallest mountain in the world?", ["Mount Everest", "K2", "Kangchenjunga", "Lhotse"]),
-            ("What is the largest ocean in the world?",
-             ["Pacific Ocean", "Atlantic Ocean", "Indian Ocean", "Arctic Ocean"]),
-            ("What is the smallest planet in our solar system?", ["Mercury", "Venus", "Mars", "Earth"]),
-            ("What is the largest country in the world by area?", ["Russia", "Canada", "China", "United States"]),
-            ("What is the longest river in the world?", ["Nile", "Amazon", "Yangtze", "Mississippi"]),
-            ("What is the chemical symbol for the element with atomic number 1?", ["H", "He", "Li", "Be"]),
-            ("Who developed the theory of general relativity?",
-             ["Albert Einstein", "Isaac Newton", "Galileo Galilei", "Nikola Tesla"]),
-            ("What is the hardest natural substance on Earth?", ["Diamond", "Graphite", "Corundum", "Topaz"]),
-            ("Which country has the most natural lakes?", ["Canada", "Russia", "Brazil", "United States"]),
-            ("What is the smallest bone in the human body?", ["Stapes", "Malleus", "Incus", "Humerus"]),
-            ("What is the speed of light in a vacuum?",
-             ["299,792,458 meters per second", "150,000,000 meters per second", "1,080,000,000 meters per second",
-              "300,000,000 meters per second"]),
-            ("Who wrote the play 'Hamlet'?",
-             ["William Shakespeare", "Christopher Marlowe", "Ben Jonson", "John Webster"]),
-            ("What is the powerhouse of the cell?", ["Mitochondria", "Nucleus", "Ribosome", "Endoplasmic Reticulum"]),
-            ("What is the capital of Australia?", ["Canberra", "Sydney", "Melbourne", "Brisbane"]),
-            ("What is the largest desert in the world?",
-             ["Antarctic Desert", "Sahara Desert", "Arabian Desert", "Gobi Desert"]),
-        ]
+        self.reset_questions()
         self.current_question = 0
         self.correct_answer = ''
         self.leaderboard_frame.pack_forget()
@@ -310,6 +290,7 @@ class QuizApp(tk.Tk):
         self.button2.place(relx=0.7, rely=0.6, anchor=tk.CENTER)
         self.name_frame.pack(fill='both', expand=True)
         self.name_entry.delete(0, 'end')
+
 
 if __name__ == "__main__":
     app = QuizApp()
