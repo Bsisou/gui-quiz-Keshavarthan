@@ -191,11 +191,13 @@ class QuizApp(tk.Tk):
 
         # Create widgets for the difficulty selection frame
         self.easy_button = ctk.CTkButton(self.difficulty_frame, text='Easy',
-                                         command=lambda: self.set_difficulty('easy'))
+                                         command=lambda: self.set_difficulty('easy'), width=300, height=100,
+                                         font=buttonfont2)
         self.hard_button = ctk.CTkButton(self.difficulty_frame, text='Hard',
-                                         command=lambda: self.set_difficulty('hard'))
-        self.easy_button.pack(pady=20)
-        self.hard_button.pack(pady=20)
+                                         command=lambda: self.set_difficulty('hard'), width=300, height=100,
+                                         font=buttonfont2)
+        self.easy_button.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
+        self.hard_button.place(relx=0.5, rely=0.6, anchor=tk.CENTER)
 
         # Create widgets for the quiz frame using grid
         self.question_label = ctk.CTkLabel(self.quiz_frame, text="", font=question_font, text_color="#FEFFDC",
@@ -218,7 +220,8 @@ class QuizApp(tk.Tk):
         self.timer_label.grid(row=0, column=2, columnspan=2, pady=10)
 
         # Back button to return to the previous screen
-        self.back_button = ctk.CTkButton(self.quiz_frame, text="Back", command=self.return_to_home, font=buttonfont3)
+        self.back_button = ctk.CTkButton(self.quiz_frame, text="Back", command=self.return_to_home, font=buttonfont3,
+                                         fg_color="#e53935", text_color="white")
         self.back_button.place(relx=0.25, rely=0.6, anchor=tk.CENTER)  # Place at the bottom left
 
         # Submit button
@@ -250,8 +253,9 @@ class QuizApp(tk.Tk):
 
         self.funfact_back_button = ctk.CTkButton(self.funfact_frame, text="HOME", command=self.return_to_home,
                                                  fg_color="#e53935", text_color="white")
-        self.funfact_back_button.place(relx=0.5, rely=0.7, anchor=tk.CENTER)
+        self.funfact_back_button.place(relx=0.7, rely=0.5, anchor=tk.CENTER)  # Aligned to the bottom right
 
+    # Reset the list of questions based on the selected difficulty
     def reset_questions(self):
         if self.difficulty == 'easy':
             self.questions = self.original_questions.copy()
@@ -260,6 +264,7 @@ class QuizApp(tk.Tk):
         shuffle(self.questions)
         self.questions = self.questions[:10]  # Select only the first 10 questions
 
+    # Start the quiz by hiding the home frame and showing the name entry frame
     def start_quiz(self):
         self.home_frame.pack_forget()
         self.button1.place_forget()
@@ -267,6 +272,7 @@ class QuizApp(tk.Tk):
         self.name_entry.place(relx=0.5, rely=0.6, anchor=tk.CENTER)
         self.enter_button.place(relx=0.5, rely=0.7, anchor=tk.CENTER)
 
+    # Validate the entered name and proceed to the difficulty selection frame
     def validate_name(self):
         while True:
             user_name = self.name_entry.get()
@@ -285,6 +291,7 @@ class QuizApp(tk.Tk):
                 self.difficulty_frame.pack(fill='both', expand=True)
                 break
 
+    # Set the difficulty level and proceed to the quiz frame
     def set_difficulty(self, difficulty):
         self.difficulty = difficulty
         self.difficulty_frame.pack_forget()
@@ -292,6 +299,7 @@ class QuizApp(tk.Tk):
         self.reset_questions()
         self.display_question()
 
+    # Process the next question or show the leaderboard if no questions are left
     def process_next(self):
         if self.questions:
             self.questions.pop(0)
@@ -301,6 +309,7 @@ class QuizApp(tk.Tk):
             self.show_leaderboard()
             self.submit_button.configure(state='normal')
 
+    # Display the current question and options
     def display_question(self):
         if not self.questions:
             self.show_leaderboard()
@@ -311,7 +320,7 @@ class QuizApp(tk.Tk):
         shuffle(options)
         self.correct_answer = options.index(correct_answer_text)
         self.question_label.configure(text=self.current_question)
-        self.question_label.grid(row=3, column=0, columnspan=4, pady=20)  # Adjust the row value to bring it lower
+        self.question_label.grid(row=3, column=0, columnspan=4, pady=20)
 
         grid_positions = [(11, 1), (11, 2), (13, 1), (13, 2)]  # Adjust the row values to bring them lower
         for i, option in enumerate(options):
@@ -339,12 +348,14 @@ class QuizApp(tk.Tk):
             self.status_label.configure(
                 text=f"Question {((len(self.original_questions) - len(self.questions)) % 10) + 1} of {min(len(self.original_questions), 10)} | Score: {str(self.user_score)}")
 
+    # Start the timer for hard mode questions
     def start_timer(self):
         if self.timer_id is not None:
             self.after_cancel(self.timer_id)  # Cancel any existing timer
         self.time_left = 10  # 10 seconds for hard mode
         self.update_timer()
 
+    # Update the timer label every second
     def update_timer(self):
         if self.time_left > 0:
             self.timer_label.configure(text=f"Time left: {self.time_left} seconds")
@@ -353,6 +364,8 @@ class QuizApp(tk.Tk):
         else:
             self.submit_button.configure(state='disabled')  # Disable the submit button
             self.process_next()
+
+            # Check the selected answer and update the score
 
     def check_answer(self):
         selected_option = self.options_var.get()
@@ -364,12 +377,14 @@ class QuizApp(tk.Tk):
             self.user_score += 1
         self.after(200, self.process_next)
 
+    # Show the leaderboard with the user's score
     def show_leaderboard(self):
         self.quiz_frame.pack_forget()
         self.leaderboard_frame.pack(fill='both', expand=True)
         self.username_label.configure(text=f"USERNAME: {self.user_name}")
         self.score_label.configure(text=f"SCORE: {self.user_score}")
 
+    # Show a random fun fact
     def show_funfact(self):
         self.home_frame.pack_forget()
         self.name_frame.pack_forget()
@@ -381,6 +396,7 @@ class QuizApp(tk.Tk):
         # Update the fun fact
         self.funfact_label.configure(text=random_fact)
 
+    # Return to the home screen and reset the quiz
     def return_to_home(self):
         self.user_name = ''
         self.user_score = 0
