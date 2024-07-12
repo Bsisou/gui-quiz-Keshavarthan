@@ -72,7 +72,7 @@ class QuizApp(tk.Tk):
         self.difficulty_frame.pack_forget()
 
         # Quiz frame (hidden by default)
-        self.quiz_frame = ctk.CTkFrame(self)
+        self.quiz_frame = ctk.CTkFrame(self, fg_color="#211D2D")  # Set background color
         self.quiz_frame.pack_forget()
 
         # Leaderboard frame (hidden by default)
@@ -166,7 +166,7 @@ class QuizApp(tk.Tk):
             "A day on Venus is longer than a year on Venus. It takes Venus longer to rotate once on its axis (243 Earth days) than it does to complete one orbit of the Sun (225 Earth days).",
             "Bananas are berries, but strawberries aren't. Botanically, a berry is a fruit produced from the ovary of a single flower with seeds embedded in the flesh.",
             "Octopuses have three hearts. Two pump blood to the gills, while the third pumps it to the rest of the body.",
-            "There are more stars in the universe than grains of sand on all the Earth's beaches. The observable universe has an estimated 1,000,000,000,000,000,000,000,000 stars."
+            "There are more stars in the universe than grains of sand on all the Earth's beaches. The observable universe has an estimated 1,000,000,000,000,000,000,000 stars."
         ]
 
         self.initialize_quiz_ui()
@@ -198,19 +198,23 @@ class QuizApp(tk.Tk):
         self.hard_button.pack(pady=20)
 
         # Create widgets for the quiz frame using grid
-        self.question_label = ctk.CTkLabel(self.quiz_frame, text="", font=question_font)  # Set font for question label
+        self.question_label = ctk.CTkLabel(self.quiz_frame, text="", font=question_font, text_color="#FEFFDC",
+                                           fg_color="#211D2D")  # Set font for question label
         self.question_label.grid(row=3, column=0, columnspan=4, pady=20)  # Adjust the row value to bring it lower
 
         self.options_var = tk.IntVar()
         self.options_buttons = [
-            ctk.CTkRadioButton(self.quiz_frame, text="Option", variable=self.options_var, value=i, font=radio_font) for
-            i in range(4)]
+            ctk.CTkRadioButton(self.quiz_frame, text="Option", variable=self.options_var, value=i, font=radio_font,
+                               text_color="#FEFFDC", fg_color="#76ABAE", hover_color="#FEFFDC", border_color="#FEFFDC")
+            for i in range(4)]
 
         # Status label for current question and score
-        self.status_label = ctk.CTkLabel(self.quiz_frame, text="", text_color="white")  # Set text color to white
+        self.status_label = ctk.CTkLabel(self.quiz_frame, text="", text_color="white",
+                                         fg_color="#211D2D")  # Set text color to white
         self.status_label.grid(row=0, column=0, columnspan=2, pady=10)
 
-        self.timer_label = ctk.CTkLabel(self.quiz_frame, text="", text_color="white")  # Set text color to white
+        self.timer_label = ctk.CTkLabel(self.quiz_frame, text="", text_color="white",
+                                        fg_color="#211D2D")  # Set text color to white
         self.timer_label.grid(row=0, column=2, columnspan=2, pady=10)
 
         # Back button to return to the previous screen
@@ -224,9 +228,6 @@ class QuizApp(tk.Tk):
 
         # Create widgets for the leaderboard frame
         leaderboard_font = ctk.CTkFont(family="Helvetica", size=24, weight="bold")
-        self.results_label = ctk.CTkLabel(self.leaderboard_frame, text="RESULTS", font=leaderboard_font,
-                                          fg_color="#0073e6", text_color="white")
-        self.results_label.place(relx=0.5, rely=0.2, anchor=tk.CENTER)  # Centered at the top
 
         # Username and Score labels
         self.username_label = ctk.CTkLabel(self.leaderboard_frame, text="USERNAME", font=leaderboard_font,
@@ -243,13 +244,9 @@ class QuizApp(tk.Tk):
         self.home_button.place(relx=0.5, rely=0.7, anchor=tk.CENTER)  # Centered and lowered position
 
         # Create widgets for the fun fact frame
-        self.funfact_title_label = ctk.CTkLabel(self.funfact_frame, text="FUN FACTS", font=buttonfont2,
-                                                fg_color="#0073e6", text_color="white")
-        self.funfact_title_label.place(relx=0.5, rely=0.1, anchor=tk.CENTER)
-
-        self.funfact_label = ctk.CTkLabel(self.funfact_frame, text="", wraplength=800, fg_color="#009688",
-                                          text_color="white")
-        self.funfact_label.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
+        self.funfact_label = ctk.CTkLabel(self.funfact_frame, text="", wraplength=400, width=400, height=400,
+                                          fg_color=None, text_color="white", corner_radius=10)
+        self.funfact_label.place(relx=0.25, rely=0.5, anchor=tk.CENTER)
 
         self.funfact_back_button = ctk.CTkButton(self.funfact_frame, text="HOME", command=self.return_to_home,
                                                  fg_color="#e53935", text_color="white")
@@ -316,7 +313,7 @@ class QuizApp(tk.Tk):
         self.question_label.configure(text=self.current_question)
         self.question_label.grid(row=3, column=0, columnspan=4, pady=20)  # Adjust the row value to bring it lower
 
-        grid_positions = [(7, 1), (7, 2), (8, 1), (8, 2)]  # Adjust the row values to bring them lower
+        grid_positions = [(11, 1), (11, 2), (13, 1), (13, 2)]  # Adjust the row values to bring them lower
         for i, option in enumerate(options):
             self.options_buttons[i].configure(text=option)
             self.options_buttons[i].grid(row=grid_positions[i][0], column=grid_positions[i][1], pady=10, padx=30,
@@ -327,6 +324,8 @@ class QuizApp(tk.Tk):
         self.quiz_frame.columnconfigure(1, weight=1)
         self.quiz_frame.columnconfigure(2, weight=1)
         self.quiz_frame.columnconfigure(3, weight=1)
+        self.quiz_frame.rowconfigure(13, weight=1)  # Ensure the row is configured to expand
+        self.quiz_frame.rowconfigure(14, weight=1)
         self.submit_button.configure(state='normal')
 
         # Update the status label position
