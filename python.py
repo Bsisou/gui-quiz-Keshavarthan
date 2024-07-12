@@ -46,6 +46,7 @@ class QuizApp(tk.Tk):
         self.leaderboard_bg_image = PhotoImage(
             file="C:/Users/educa/OneDrive/Desktop/CS-03.png")  # Leaderboard background
         self.funfact_bg_image = PhotoImage(file="C:/Users/educa/OneDrive/Desktop/CS-04.png")  # Funfact background
+        self.difficulty_bg_image = PhotoImage(file="C:/Users/educa/OneDrive/Desktop/CS-05.png")  # Difficulty background
 
         # Function to set background image for a frame
         def set_background(frame, image):
@@ -70,6 +71,7 @@ class QuizApp(tk.Tk):
         # Difficulty selection frame (hidden by default)
         self.difficulty_frame = ctk.CTkFrame(self)
         self.difficulty_frame.pack_forget()
+        set_background(self.difficulty_frame, self.difficulty_bg_image)
 
         # Quiz frame (hidden by default)
         self.quiz_frame = ctk.CTkFrame(self, fg_color="#211D2D")  # Set background color
@@ -198,6 +200,10 @@ class QuizApp(tk.Tk):
                                          font=buttonfont2)
         self.easy_button.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
         self.hard_button.place(relx=0.5, rely=0.6, anchor=tk.CENTER)
+
+        # Tooltip for difficulty buttons
+        ToolTip(self.easy_button, "Select this for an easier set of questions.")
+        ToolTip(self.hard_button, "Select this for a harder set of questions with a timer.")
 
         # Create widgets for the quiz frame using grid
         self.question_label = ctk.CTkLabel(self.quiz_frame, text="", font=question_font, text_color="#FEFFDC",
